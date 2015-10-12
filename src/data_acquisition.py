@@ -2,6 +2,7 @@
 This module contains functions for downloading and verifying data from
 the internet.
 """
+import os 
 import urllib2 
 
 import urllib2
@@ -57,14 +58,17 @@ def save_data(data, output_filename):
     Hint
     ----
     Check out the os module for determining whether a file exists already.
+
     """
-    if (os.path.exists(output_filename)):
-        return 1
-    else:
-        f = os.open(output_filename)
-        os.write(f, data)
-        os.close(f)
+
+    if not os.path.exists(output_filename): # output_file doesn't currently exist
+        
+        fd = os.open(output_filename,os.O_WRONLY|os.O_CREAT)
+        os.write(fd,data)
+        os.close(fd)
         return 0
+    else:
+        return 1
 
 def verify_data(data, known_checksum):
     """
