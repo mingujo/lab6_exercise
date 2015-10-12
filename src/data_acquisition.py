@@ -2,6 +2,7 @@
 This module contains functions for downloading and verifying data from
 the internet.
 """
+import urllib2 
 
 import urllib2
 import os
@@ -27,6 +28,7 @@ def download_data(url):
     ----
     Consider the urllib2 or wget python modules
     """
+
     link = urllib2.urlopen(url)
     result = link.read()
     return result
