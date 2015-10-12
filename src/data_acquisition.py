@@ -3,6 +3,11 @@ This module contains functions for downloading and verifying data from
 the internet.
 """
 
+import urllib2
+import os
+import hashlib
+import nibabel as nib
+
 def download_data(url):
     """
     Download and save data from a url.
@@ -22,7 +27,9 @@ def download_data(url):
     ----
     Consider the urllib2 or wget python modules
     """
-    return NotImplemented
+    link = urllib2.urlopen(url)
+    result = link.read()
+    return result
 
 def save_data(data, output_filename):
     """
@@ -49,7 +56,13 @@ def save_data(data, output_filename):
     ----
     Check out the os module for determining whether a file exists already.
     """
-    return NotImplemented
+    if (os.path.exists(output_filename)):
+        return 1
+    else:
+        f = os.open(output_filename)
+        os.write(f, data)
+        os.close(f)
+        return 0
 
 def verify_data(data, known_checksum):
     """
@@ -73,8 +86,13 @@ def verify_data(data, known_checksum):
     ----
     Check out the hashlib module
     """
-    return NotImplemented
-        
+    hash_object = hashlib.sha1(data)
+    if(hash_object is known_checksum):
+        return True
+    else:
+        return False
+
+
 def load_parsed_data(fname):
     """
     Load fmri data in .nii and parse into a numpy array
@@ -93,7 +111,9 @@ def load_parsed_data(fname):
     ----
     Use nibabel
     """
-    return NotImplemented
+    img=nib.load(fname)
+    data = img.get_data()
+    return data
 
 def main(data.json):
     """
@@ -122,7 +142,16 @@ def main(data.json):
     ----
     Use the functions you've implemented above
     """
-    return NotImplemented
+    data = json.loads(data.json)
+
+    if (!save_data(data['url'])):
+
+        fdata=download_data(data['url'])
+        save_data(fdata)
+        if (verify_data(data['name'],data['sha1'])):
+            result=(load_parsed_data(data['name']))
+            return result
+
 
 ### Add lines here that guarantees main() is run with example_data.json when
 ### called as a script
